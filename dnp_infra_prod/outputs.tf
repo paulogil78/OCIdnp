@@ -7,3 +7,6 @@ output "image" {
 output "vault_key" {
   value = data.oci_kms_key.test_key.id
 }
+output "Windows_Images"{
+  value = local.windowsImage
+}

@@ -162,6 +162,17 @@ variable "prod_databases" {
     })
   )
 }
+
+variable "onpremise_cidrs" {
+  description = "list of all onpremise CIDRs"
+  type = list(string)
+}
+variable "db_exports_fs_display_name" {}
+
+variable "available_shapes" {
+  description = "list of all available shape for compute instances"
+  type = list(string)
+}
 /*variable "preprod_ports" {
     description = "list of ingress ports per preprod subnet"
     type = map(

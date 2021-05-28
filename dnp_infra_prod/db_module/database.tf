@@ -80,7 +80,7 @@ resource "oci_database_db_system" "database" {
     
     lifecycle {
       ignore_changes = [
-        defined_tags, freeform_tags, db_home
+        defined_tags, freeform_tags, db_home[0].defined_tags, db_home[0].database[0].defined_tags
       ]
     }
     #Optional

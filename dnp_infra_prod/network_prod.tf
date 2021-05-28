@@ -104,6 +104,28 @@ resource "oci_core_security_list" "ProdSecList1" {
       }
     }
   }
+  /*dynamic "ingress_security_rules" {
+    for_each = toset(var.onpremise_cidrs)
+    content {
+      source   = ingress_security_rules.value
+      protocol = 6 // tcp
+      tcp_options {
+        max = 1521
+        min = 1521
+      }
+    }
+  }*/
+  dynamic "ingress_security_rules" {
+    for_each = toset(var.onpremise_cidrs)
+    content {
+      source   = ingress_security_rules.value
+      protocol = 6 // tcp
+      tcp_options {
+        max = 22
+        min = 22
+      }
+    }
+  }
   defined_tags = {
     "DNP-Tags.Environment" = "${var.tag_environment_prod}"
     "DNP-Tags.Department"  = "${var.tag_department_TI}"
@@ -325,6 +347,13 @@ resource "oci_core_route_table" "prod_vcn_rt" {
   route_rules {
     destination       = var.cidr_vcn_dr
     network_entity_id = oci_core_drg.prod_drg.id
+  }
+  dynamic "route_rules"{
+    for_each = toset(var.onpremise_cidrs)
+    content {
+      destination       = route_rules.value // ONPREMISES CIDRs
+      network_entity_id = oci_core_local_peering_gateway.prod_local_peering_gateway.id
+    }
   }
   defined_tags = {
     "DNP-Tags.Environment" = "${var.tag_environment_prod}"

@@ -66,6 +66,18 @@ data "oci_core_images" "linux7_images" {
 locals {
   linux7image = data.oci_core_images.linux7_images.images[0].id
 }
+data "oci_core_images" "windows_image" {
+  compartment_id = var.tenancy_ocid
+  operating_system = "Windows"
+  filter {
+    name = "display_name"
+    values = ["Windows-Server-2019-Standard-Edition-VM-Gen2-2021.04.13-0"]
+  }
+}
+locals {
+  windowsImage = data.oci_core_images.windows_image.images[0].id
+}
+
 locals {
   free_tier_shape = distinct(data.oci_core_shapes.free_tier_shapes.shapes[*].name)[0]
 }

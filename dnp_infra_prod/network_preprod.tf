@@ -138,7 +138,7 @@ resource "oci_core_security_list" "PreprodSecList2" {
     source   = var.cidr_vcn_preprod // PREPROD VCN CIDR
   }
   dynamic "ingress_security_rules" {
-    for_each = toset(var.preprod_ports.db_subnet_ports)
+    for_each = toset(var.preprod_ports.db_subnet_ports)//23
     content {
       source   = var.cidr_vcn_services
       protocol = 6 // tcp
@@ -297,6 +297,13 @@ resource "oci_core_route_table" "preprod_vcn_rt" {
     destination       = local.object_storage_cidr
     destination_type  = "SERVICE_CIDR_BLOCK"
     network_entity_id = oci_core_service_gateway.preprod_service_gateway.id
+  }
+  dynamic "route_rules"{
+    for_each = toset(var.onpremise_cidrs)
+    content {
+      destination       = route_rules.value // ONPREMISES CIDRs
+      network_entity_id = oci_core_local_peering_gateway.preprod_local_peering_gateway.id
+    }
   }
   defined_tags = {
     "DNP-Tags.Environment" = "${var.tag_environment_preprod}"
