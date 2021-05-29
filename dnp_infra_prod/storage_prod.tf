@@ -11,8 +11,11 @@ resource "oci_file_storage_mount_target" "prod_mount_target" {
     }
     display_name = "prod_mt"//var.mount_target_display_name
     hostname_label = "prodmt"//var.mount_target_hostname_label
-    //ip_address = var.mount_target_ip_address
-    //nsg_ids = var.mount_target_nsg_ids
+    lifecycle {
+        ignore_changes = [
+        defined_tags, freeform_tags
+        ]
+    }
 }
 resource "oci_file_storage_export_set" "prod_export_set" {
     #Required
@@ -32,8 +35,11 @@ resource "oci_file_storage_file_system" "oas_oracle_home" {
         "DNP-Tags.Department"  = "${var.tag_department_TI}"
     }
     display_name = "OAS Oracle Home FS"//var.file_system_display_name
-    //kms_key_id = oci_kms_key.test_key.id
-    //source_snapshot_id = oci_file_storage_snapshot.test_snapshot.id
+    lifecycle {
+        ignore_changes = [
+        defined_tags, freeform_tags
+        ]
+    }
 }
 
 resource "oci_file_storage_export" "oas_oracle_home_export" {
@@ -49,10 +55,6 @@ resource "oci_file_storage_export" "oas_oracle_home_export" {
 
         #Optional
         access = "READ_WRITE"//var.export_export_options_access
-        //anonymous_gid = var.export_export_options_anonymous_gid
-        //anonymous_uid = var.export_export_options_anonymous_uid
-        //identity_squash = var.export_export_options_identity_squash
-        //require_privileged_source_port = var.export_export_options_require_privileged_source_port
     }
 }
 
@@ -67,8 +69,11 @@ resource "oci_file_storage_file_system" "oas_domain" {
         "DNP-Tags.Department"  = "${var.tag_department_TI}"
     }
     display_name = "OAS Domain FS"//var.file_system_display_name
-    //kms_key_id = oci_kms_key.test_key.id
-    //source_snapshot_id = oci_file_storage_snapshot.test_snapshot.id
+    lifecycle {
+        ignore_changes = [
+        defined_tags, freeform_tags
+        ]
+    }
 }
 
 resource "oci_file_storage_export" "oas_domain_export" {
@@ -81,40 +86,69 @@ resource "oci_file_storage_export" "oas_domain_export" {
     export_options {
         #Required
         source = var.cidr_vcn_prod_subnet_CN01//var.export_export_options_source
-
         #Optional
         access = "READ_WRITE"//var.export_export_options_access
-        //anonymous_gid = var.export_export_options_anonymous_gid
-        //anonymous_uid = var.export_export_options_anonymous_uid
-        //identity_squash = var.export_export_options_identity_squash
-        //require_privileged_source_port = var.export_export_options_require_privileged_source_port
     }
 }
 
 resource "null_resource" "OASOracleHomeMountFileSystem" {
-    depends_on = [
-      //instancia oas, bastion host, storage_export
-    ]
+    for_each = {
+        oas1 = "10.10.252.67"
+        oas2 = "10.10.252.71"
+    }
+    depends_on = [ oci_core_instance.bastion_prod, module.oas_servers, oci_file_storage_export.oas_oracle_home_export]
 
+    connection {
+        type = "ssh"
+        user = "opc"
+        host = each.value //"10.10.252.67" //oas_private_ip_address
+        private_key = "${file("../keys/dnp_cn_key")}" //file("../keys/dnp_cn_key.pub")
+        script_path = "/home/opc/myssh2.sh"
+        agent = false
+        timeout = "10m"
+        bastion_host = "158.101.8.194" //bastion public ip 
+        //bastion_port = "22"
+        bastion_user = "opc"
+        bastion_private_key = "${file("../keys/ssh-privatekey-bastion.key")}"
+    }
     provisioner "remote-exec" {
-        connection {
-            type = "ssh"
-            user = "opc"
-            host = "" //oas_private_ip_address
-            private_key = file(var.private_key_oci)
-            script_path = "/home/opc/myssh.sh"
-            agent = false
-            timeout = "10m"
-            bastion_host = "" //bastion public ip 
-            bastion_port = "22"
-            bastion_user = "opc"
-            bastion_private_key = file(var.private_key_oci)
-        }
         inline = [
             "sudo /bin/su -c \"yum install -y -q nfs-utils\"",
-            "sudo /bin/su -c \"mkdir -p /u01/app/oracle/fmw/product/\"",
-            "sudo /bin/su -c \"echo '10.0.1.25:/oas_oracle_home /u01/app/oracle/fmw/product/ nfs rsize=8192,wsize=8192,timeo=14,intr 0  0' >> /etc/fstab\"",
-            "sudo /bin/su -c \"mount /oas_oracle_home\""
+            "sudo /bin/su -c \"mkdir -p /u01/app/oracle/product/fmw/\"",
+            "sudo /bin/su -c \"echo 'prodmt.cn01.proddnp.oraclevcn.com:/oas_oracle_home /u01/app/oracle/product/fmw/ nfs rsize=8192,wsize=8192,timeo=14,intr 0  0' >> /etc/fstab\"",
+            "sudo /bin/su -c \"mount /u01/app/oracle/product/fmw/\""
+        ]
+    }
+  
+}
+
+resource "null_resource" "OASDomainMountFileSystem" {
+    for_each = {
+        oas1 = "10.10.252.67"
+        oas2 = "10.10.252.71"
+    }
+
+    depends_on = [ oci_core_instance.bastion_prod, module.oas_servers, oci_file_storage_export.oas_oracle_home_export]
+
+    connection {
+        type = "ssh"
+        user = "opc"
+        host = each.value //"10.10.252.67" //oas_private_ip_address
+        private_key = "${file("../keys/dnp_cn_key")}" //file("../keys/dnp_cn_key.pub")
+        script_path = "/home/opc/myssh.sh"
+        agent = false
+        timeout = "10m"
+        bastion_host = "158.101.8.194" //bastion public ip 
+        //bastion_port = "22"
+        bastion_user = "opc"
+        bastion_private_key = "${file("../keys/ssh-privatekey-bastion.key")}"
+    }
+    provisioner "remote-exec" {
+        inline = [
+            "sudo /bin/su -c \"yum install -y -q nfs-utils\"",
+            "sudo /bin/su -c \"mkdir -p /u01/app/oracle/admin/\"",
+            "sudo /bin/su -c \"echo 'prodmt.cn01.proddnp.oraclevcn.com:/oas_domain /u01/app/oracle/admin/ nfs rsize=8192,wsize=8192,timeo=14,intr 0  0' >> /etc/fstab\"",
+            "sudo /bin/su -c \"mount /u01/app/oracle/admin/\""
         ]
     }
   
