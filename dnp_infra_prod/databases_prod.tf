@@ -34,9 +34,9 @@ module "database_dwhdr" {
   }
 }
 
-/*module "database_datoscnr" {
+module "database_wls_metadata" {
   source                    = "./db_module"
-  database_config           = var.prod_databases.datoscnr_db
+  database_config           = var.prod_databases.wls_metadata_db
   input_compartment_id      = var.prod_compartment
   input_availability_domain = local.phx_ad2
   input_subnet_id           = module.subnet_Prod-DB01.subnet_id
@@ -44,7 +44,7 @@ module "database_dwhdr" {
   providers = {
     oci.prov = oci.PROD
   }
-}*/
+}
 
 module "database_oid" {
   source                    = "./db_module"

@@ -8,6 +8,11 @@ variable "num_instances_oas" {
   default     = 2
 }
 
+variable "num_instances_oam" {
+  description = "Amount of OAM instances to create"
+  default     = 2
+}
+
 variable "num_instances_win" {
   description = "Amount of OAS instances to create"
   default     = 2
@@ -20,7 +25,7 @@ variable "num_instances_odi" {
 
 variable "num_instances_oid" {
   description = "Amount of OID instances to create"
-  default     = 1
+  default     = 2
 }
 
 variable "availability_domain" {
@@ -73,6 +78,11 @@ variable "instance_image_linux_ocid" {
   default     = "ocid1.image.oc1.phx.aaaaaaaanj7qmui2ux5hbiwtbtkzajuvvhuzo2y7755stim22ue6msqwv2ja"
 }
 
+variable "instance_image_linux_ocid_bastion"{
+  description = "Defines the OCID for the OS image to be used on artifact creation. Extract OCID from: https://docs.cloud.oracle.com/iaas/images/ or designated custom image OCID created by packer"
+  default     = "ocid1.image.oc1.phx.aaaaaaaanj7qmui2ux5hbiwtbtkzajuvvhuzo2y7755stim22ue6msqwv2ja"
+}
+
 variable "instance_image_win_ocid" {
   description = "Defines the OCID for the OS image to be used on artifact creation. Extract OCID from: https://docs.cloud.oracle.com/iaas/images/ or designated custom image OCID created by packer"
   default     = "ocid1.image.oc1.phx.aaaaaaaafn7ehm7tffoypsohi3bn7m2cig7kwcibysycnf5cqzt62fqil2oq"
@@ -86,6 +96,11 @@ variable "display_weblogic" {
 variable "display_oas" {
   description = "Defines the vm name"
   default     = "PDOAS0"
+}
+
+variable "display_oam" {
+  description = "Defines the vm name"
+  default     = "PDOAM0"
 }
 
 variable "display_win" {

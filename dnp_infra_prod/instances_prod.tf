@@ -14,7 +14,7 @@ resource "oci_core_instance" "bastion_prod" {
 
   source_details {
     #Required
-    source_id   = local.linux7image
+    source_id   = var.instance_image_linux_ocid //local.linux7image
     source_type = "image"
   }
 
@@ -107,6 +107,21 @@ module "oid_servers" {
   input_shape			    = var.instance_shape
   input_subnet		    = module.subnet_Prod-CN01.subnet_id
   input_display		    = var.display_oid
+  input_end			      = var.back_end
+  defined_tags = {
+    "DNP-Tags.Environment" = "${var.tag_environment_prod}"
+    "DNP-Tags.Department"  = "${var.tag_department_TI}"
+  }
+}
+/*OAS servers*/
+module "oam_servers" {
+  source              = "./compute_module"
+  input_num_instances = var.num_instances_oam
+  input_compartment   = var.prod_compartment
+  input_image         = var.instance_image_linux_ocid
+  input_shape			    = var.instance_shape
+  input_subnet		    = module.subnet_Prod-CN01.subnet_id
+  input_display		    = var.display_oam
   input_end			      = var.back_end
   defined_tags = {
     "DNP-Tags.Environment" = "${var.tag_environment_prod}"

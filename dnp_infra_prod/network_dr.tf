@@ -139,7 +139,7 @@ resource "oci_core_security_list" "DRSecList1" {
   }
   lifecycle {
     ignore_changes = [
-      defined_tags, freeform_tags
+      defined_tags, freeform_tags, egress_security_rules, ingress_security_rules
     ]
   }
   provider = oci.DR
@@ -174,7 +174,7 @@ resource "oci_core_security_list" "DRSecList2" {
   }
   lifecycle {
     ignore_changes = [
-      defined_tags, freeform_tags
+      defined_tags, freeform_tags, egress_security_rules, ingress_security_rules
     ]
   }
   provider = oci.DR
@@ -205,7 +205,7 @@ resource "oci_core_security_list" "DRSecList3" {
   }
   lifecycle {
     ignore_changes = [
-      defined_tags, freeform_tags
+      defined_tags, freeform_tags, egress_security_rules, ingress_security_rules
     ]
   }
   provider = oci.DR
@@ -253,7 +253,7 @@ resource "oci_core_security_list" "DRSecList4" {
   }
   lifecycle {
     ignore_changes = [
-      defined_tags, freeform_tags
+      defined_tags, freeform_tags, egress_security_rules, ingress_security_rules
     ]
   }
   provider = oci.DR
@@ -362,13 +362,30 @@ resource "oci_core_route_table" "dr_vcn_rt" {
   }
   route_rules {
     destination       = "0.0.0.0/0"
-    network_entity_id = oci_core_nat_gateway.dr_nat_gateway.id
+    network_entity_id = oci_core_internet_gateway.internet-gateway-dr.id
   }
   route_rules {
     destination       = local.ash_object_storage_cidr
     destination_type  = "SERVICE_CIDR_BLOCK"
     network_entity_id = oci_core_service_gateway.dr_service_gateway.id
   }
+  defined_tags = {
+    "DNP-Tags.Environment" = "${var.tag_environment_dr}"
+    "DNP-Tags.Department"  = "${var.tag_department_TI}"
+  }
+  lifecycle {
+    ignore_changes = [
+      defined_tags, freeform_tags
+    ]
+  }
+  provider = oci.DR
+}
+
+/* Services Internet Gateway */
+resource "oci_core_internet_gateway" "internet-gateway-dr" {
+  compartment_id = var.prod_compartment
+  display_name   = "IG-Serv-ASH"
+  vcn_id         = oci_core_vcn.dr_vcn.id
   defined_tags = {
     "DNP-Tags.Environment" = "${var.tag_environment_dr}"
     "DNP-Tags.Department"  = "${var.tag_department_TI}"

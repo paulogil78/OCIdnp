@@ -22,7 +22,7 @@ provider "oci" {
 
 terraform {
   backend "http" {
-    address       = "https://objectstorage.us-phoenix-1.oraclecloud.com/p/D0ZGLik2XyjLxlL4cNj2afe3OwbPhr6UeXbyZS8k54dOr9DnTFioXC8LFhby8fsU/n/axyqnsuaghzx/b/bucket-terraform-state-repo/o/terraform.tfstate"
+    address       = "https://objectstorage.us-phoenix-1.oraclecloud.com/p/1hKSXBKQqD-n3bsF-THbt5C0O9AwkSmthORSsq7xCTPDsaVa47SZiujdaDIx0_yG/n/axyqnsuaghzx/b/bucket-terraform-state-repo/o/terraform.tfstate"
     update_method = "PUT"
   }
 }

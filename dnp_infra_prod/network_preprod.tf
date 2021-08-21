@@ -113,7 +113,7 @@ resource "oci_core_security_list" "PreprodSecList1" {
   }
   lifecycle {
     ignore_changes = [
-      defined_tags, freeform_tags
+      defined_tags, freeform_tags, ingress_security_rules, egress_security_rules
     ]
   }
 }
@@ -155,7 +155,7 @@ resource "oci_core_security_list" "PreprodSecList2" {
   }
   lifecycle {
     ignore_changes = [
-      defined_tags, freeform_tags
+      defined_tags, freeform_tags, ingress_security_rules, egress_security_rules
     ]
   }
 }
@@ -198,7 +198,7 @@ resource "oci_core_security_list" "PreprodSecList3" {
   }
   lifecycle {
     ignore_changes = [
-      defined_tags, freeform_tags
+      defined_tags, freeform_tags, ingress_security_rules, egress_security_rules
     ]
   }
 }
@@ -311,7 +311,7 @@ resource "oci_core_route_table" "preprod_vcn_rt" {
   }
   lifecycle {
     ignore_changes = [
-      defined_tags, freeform_tags
+      defined_tags, freeform_tags, route_rules
     ]
   }
 }

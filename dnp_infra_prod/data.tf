@@ -48,9 +48,9 @@ data "oci_core_images" "linux7_images_ash" {
   compartment_id = "ocid1.compartment.oc1..aaaaaaaaivlloczgwwhdvbdnxwy5s7jfe7ekrweaglno33xd4l2bkpklf3qq"
   sort_by        = "TIMECREATED"
   sort_order     = "DESC"
-  /*operating_system = "Oracle Linux"
-    operating_system_version = "7.9"*/
-  display_name = "Oracle-Linux-7.9-2021.04.09-0"
+  operating_system = "Oracle Linux"
+  operating_system_version = "7.9"
+  /*display_name = "Oracle-Linux-7.9-2021.04.09-0"*/
 }
 locals {
   linux7image_ash = data.oci_core_images.linux7_images_ash.images[0].id
@@ -59,9 +59,9 @@ data "oci_core_images" "linux7_images" {
   compartment_id = var.tenancy_ocid
   sort_by        = "TIMECREATED"
   sort_order     = "DESC"
-  /*operating_system = "Oracle Linux"
-    operating_system_version = "7.9"*/
-  display_name = "Oracle-Linux-7.9-2021.04.09-0"
+  operating_system = "Oracle Linux"
+  operating_system_version = "7.9"
+  /*display_name = "Oracle-Linux-7.9-2021.04.09-0"*/
 }
 locals {
   linux7image = data.oci_core_images.linux7_images.images[0].id

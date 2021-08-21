@@ -16,3 +16,4 @@ output "instance" {
   description = "Compute Generated"
   value       = oci_core_instance.Compute
 }
+

@@ -293,3 +293,26 @@ resource "oci_core_route_table" "services_vcn_rt" {
     ]
   }
 }
+
+/*LOAD BALANCER*/
+resource "oci_load_balancer_load_balancer" "prod_load_balancer" {
+    #Required
+    compartment_id = var.services_compartment
+    display_name = "DNP-LoadBalancer"
+    shape = "400Mbps"
+    subnet_ids = [module.subnet_Serv-Public1.subnet_id]
+
+    #Optional
+    defined_tags = {
+      "DNP-Tags.Environment" = "${var.tag_environment_prod}"
+      "DNP-Tags.Department"  = "${var.tag_department_TI}"
+    }
+    ip_mode = "IPV4"
+    is_private = "false"
+    //network_security_group_ids = var.load_balancer_network_security_group_ids
+    lifecycle {
+    ignore_changes = [
+      defined_tags, freeform_tags
+    ]
+  }
+}
