@@ -52,7 +52,7 @@ resource "oci_core_subnet" "subnet_DR-CN01" {
   security_list_ids          = [oci_core_security_list.DRSecList2.id]
   prohibit_public_ip_on_vnic = true
   dhcp_options_id            = oci_core_dhcp_options.dr_dhcp_options.id
-  route_table_id             = oci_core_route_table.dr_vcn_rt.id
+  route_table_id             = "ocid1.routetable.oc1.iad.aaaaaaaa2eyuakzkg5v2lwpk5eoiq7kxo5bqlhljhj2kgwswi3m2nnckhlkq"
   defined_tags = {
     "DNP-Tags.Environment" = "${var.tag_environment_dr}"
     "DNP-Tags.Department"  = "${var.tag_department_TI}"
